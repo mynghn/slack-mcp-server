@@ -131,6 +131,7 @@
 - [ ] T040 Verify all 6 MCP tools are registered and listed by server
 - [ ] T041 Test rate limit error handling returns proper retry information
 - [ ] T042 Test invalid_auth and missing_scope errors return clear messages
+- [ ] T042.1 Test channel_not_found, user_not_found, and thread_not_found errors return specific "not found" messages with invalid identifier
 - [ ] T043 Run quickstart.md validation: configure Claude Desktop and test all tools manually
 - [ ] T044 Ensure npm run build produces clean output without errors
 
@@ -233,6 +234,18 @@ With multiple developers:
 - Each user story produces independently testable MCP tools
 - Slack client wrapper in src/slack/ is shared across all tools
 - All tools return MCP-formatted responses with proper error handling
-- No test tasks included (not explicitly requested in spec)
 - Commit after each task or logical group
 - Stop at any checkpoint to validate story independently
+
+---
+
+## Phase 8: Unit Tests (Optional)
+
+**Purpose**: Verify tool logic with mocked Slack client
+
+- [ ] T045 [P] Create test setup with vitest config in vitest.config.ts
+- [ ] T046 [P] [US1] Add unit tests for slack_list_channels in tests/unit/tools/channels.test.ts
+- [ ] T047 [P] [US2] Add unit tests for slack_get_channel_history and slack_get_thread_replies in tests/unit/tools/messages.test.ts
+- [ ] T048 [P] [US3] Add unit tests for slack_list_users and slack_get_user_profile in tests/unit/tools/users.test.ts
+- [ ] T049 [P] [US4] Add unit tests for slack_search_messages in tests/unit/tools/search.test.ts
+- [ ] T050 Add unit tests for error mapping utilities in tests/unit/utils/errors.test.ts

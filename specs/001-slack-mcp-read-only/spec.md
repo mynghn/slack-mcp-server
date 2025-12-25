@@ -89,7 +89,7 @@ An AI assistant helps a user find specific information across channels. The user
 - **FR-006**: System MUST provide a tool to list workspace users.
 - **FR-007**: System MUST provide a tool to retrieve detailed user profile information.
 - **FR-008**: System MUST provide a tool to search messages across accessible channels.
-- **FR-009**: System MUST support pagination for all list operations using cursor-based navigation.
+- **FR-009**: System MUST support pagination for all list operations using cursor-based navigation; search operations use page-based pagination per Slack API constraints.
 - **FR-010**: System MUST NOT include any tools that modify Slack data (no posting, reacting, or editing).
 - **FR-011**: System MUST return structured responses conforming to MCP tool result specifications.
 - **FR-012**: System MUST handle Slack API errors gracefully and surface meaningful error messages.
