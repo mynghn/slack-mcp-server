@@ -64,7 +64,7 @@ const searchMessagesSchema = {
 };
 
 server.tool(
-  "slack_search_messages",
+  "search_messages",
   "Search for messages across all accessible channels",
   searchMessagesSchema,
   async ({ query, sort, sort_dir, count, page }) => {

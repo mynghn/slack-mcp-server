@@ -43,7 +43,7 @@ const listUsersSchema = {
 };
 
 server.tool(
-  "slack_list_users",
+  "list_users",
   "List all users in the Slack workspace",
   listUsersSchema,
   async ({ limit, cursor }) => {
@@ -95,7 +95,7 @@ const getUserProfileSchema = {
 };
 
 server.tool(
-  "slack_get_user_profile",
+  "get_user_profile",
   "Get detailed profile information for a specific user",
   getUserProfileSchema,
   async ({ user_id }) => {

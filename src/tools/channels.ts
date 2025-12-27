@@ -23,7 +23,7 @@ const listChannelsSchema = {
 };
 
 server.tool(
-  "slack_list_channels",
+  "list_channels",
   "List all public channels accessible to the bot in the Slack workspace",
   listChannelsSchema,
   async ({ limit, cursor, exclude_archived }) => {

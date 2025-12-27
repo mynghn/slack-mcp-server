@@ -54,7 +54,7 @@ const channelHistorySchema = {
 };
 
 server.tool(
-  "slack_get_channel_history",
+  "get_channel_history",
   "Retrieve message history from a specific channel",
   channelHistorySchema,
   async ({ channel_id, limit, cursor, oldest, latest }) => {
@@ -120,7 +120,7 @@ const threadRepliesSchema = {
 };
 
 server.tool(
-  "slack_get_thread_replies",
+  "get_thread_replies",
   "Retrieve all replies in a message thread",
   threadRepliesSchema,
   async ({ channel_id, thread_ts, limit, cursor }) => {
