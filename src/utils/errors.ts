@@ -1,8 +1,34 @@
 import type { SlackMcpError } from "../slack/types.js";
 
+// Authentication error messages
+export const AUTH_ERRORS = {
+  NO_AUTH_CONFIGURED:
+    "No authentication configured. " +
+    "Set SLACK_BOT_TOKEN for bot authentication, or both " +
+    "SLACK_USER_TOKEN and SLACK_COOKIE_D for user token authentication.",
+
+  MISSING_COOKIE:
+    "SLACK_COOKIE_D is required when using SLACK_USER_TOKEN. " +
+    "User token authentication requires both the token and the session cookie.",
+
+  SEARCH_REQUIRES_USER_TOKEN:
+    "Search requires user token authentication. " +
+    "Configure SLACK_USER_TOKEN and SLACK_COOKIE_D to enable search functionality.",
+} as const;
+
+/**
+ * Masks a credential value for safe logging/display.
+ * Short values (8 chars or less) are completely masked.
+ * Longer values show first 4 and last 4 characters.
+ */
+export function maskCredential(value: string): string {
+  if (value.length <= 8) return "***";
+  return value.slice(0, 4) + "***" + value.slice(-4);
+}
+
 const ERROR_MESSAGES: Record<string, string> = {
   rate_limited: "Rate limited by Slack API",
-  invalid_auth: "Invalid Slack token. Please check your SLACK_BOT_TOKEN",
+  invalid_auth: "Invalid Slack token. Please check your authentication credentials",
   missing_scope: "Token lacks required scope",
   channel_not_found: "Channel not found or not accessible",
   user_not_found: "User not found",

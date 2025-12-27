@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { server } from "../server.js";
-import { getSlackClient } from "../slack/client.js";
+import { getSlackClient, isSearchAvailable } from "../slack/client.js";
 import type { SearchResult, PagePaginationResult } from "../slack/types.js";
-import { mapSlackError, formatErrorForMcp } from "../utils/errors.js";
+import { mapSlackError, formatErrorForMcp, AUTH_ERRORS } from "../utils/errors.js";
 
 interface SlackSearchMatch {
   ts?: string;
@@ -68,6 +68,19 @@ server.tool(
   "Search for messages across all accessible channels",
   searchMessagesSchema,
   async ({ query, sort, sort_dir, count, page }) => {
+    // Check if search is available (requires user token auth)
+    if (!isSearchAvailable()) {
+      return {
+        content: [
+          {
+            type: "text" as const,
+            text: `Error: search_requires_user_token - ${AUTH_ERRORS.SEARCH_REQUIRES_USER_TOKEN}`,
+          },
+        ],
+        isError: true,
+      };
+    }
+
     try {
       const client = getSlackClient();
       const response = await client.search.messages({

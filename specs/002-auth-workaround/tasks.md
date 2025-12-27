@@ -29,8 +29,8 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T001 [P] Add AuthType and AuthConfig types to src/slack/types.ts per contracts/auth.ts
-- [ ] T002 [P] Add AUTH_ERRORS constant to src/utils/errors.ts per contracts/auth.ts
+- [X] T001 [P] Add AuthType and AuthConfig types to src/slack/types.ts per contracts/auth.ts
+- [X] T002 [P] Add AUTH_ERRORS constant to src/utils/errors.ts per contracts/auth.ts
 
 **Checkpoint**: Foundation ready - user story implementation can now begin
 
@@ -46,17 +46,17 @@
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T003 [US1] Create unit test file tests/unit/auth.test.ts with describe block for resolveAuthConfig
-- [ ] T004 [US1] Add test case: resolveAuthConfig returns UserAuthConfig when SLACK_USER_TOKEN and SLACK_COOKIE_D are set in tests/unit/auth.test.ts
-- [ ] T005 [US1] Add test case: resolveAuthConfig throws error when SLACK_USER_TOKEN is set without SLACK_COOKIE_D in tests/unit/auth.test.ts
-- [ ] T006 [US1] Add test case: resolveAuthConfig validates xoxc- prefix for user token in tests/unit/auth.test.ts
+- [X] T003 [US1] Create unit test file tests/unit/auth.test.ts with describe block for resolveAuthConfig
+- [X] T004 [US1] Add test case: resolveAuthConfig returns UserAuthConfig when SLACK_USER_TOKEN and SLACK_COOKIE_D are set in tests/unit/auth.test.ts
+- [X] T005 [US1] Add test case: resolveAuthConfig throws error when SLACK_USER_TOKEN is set without SLACK_COOKIE_D in tests/unit/auth.test.ts
+- [X] T006 [US1] Add test case: resolveAuthConfig validates xoxc- prefix for user token in tests/unit/auth.test.ts
 
 ### Implementation for User Story 1
 
-- [ ] T007 [US1] Implement resolveAuthConfig function in src/slack/client.ts (user token path only)
-- [ ] T008 [US1] Update getSlackClient in src/slack/client.ts to use resolveAuthConfig and pass Cookie header for user auth
-- [ ] T009 [US1] Implement getAuthType function in src/slack/client.ts
-- [ ] T010 [US1] Export new functions (resolveAuthConfig, getAuthType) from src/slack/client.ts
+- [X] T007 [US1] Implement resolveAuthConfig function in src/slack/client.ts (user token path only)
+- [X] T008 [US1] Update getSlackClient in src/slack/client.ts to use resolveAuthConfig and pass Cookie header for user auth
+- [X] T009 [US1] Implement getAuthType function in src/slack/client.ts
+- [X] T010 [US1] Export new functions (resolveAuthConfig, getAuthType) from src/slack/client.ts
 
 **Checkpoint**: User token authentication works when only SLACK_USER_TOKEN and SLACK_COOKIE_D are configured
 
@@ -72,16 +72,16 @@
 
 ### Unit Tests for User Story 3
 
-- [ ] T011 [US3] Add test case: resolveAuthConfig returns BotAuthConfig when only SLACK_BOT_TOKEN is set in tests/unit/auth.test.ts
-- [ ] T012 [US3] Add test case: resolveAuthConfig returns BotAuthConfig when both bot and user credentials are set (backward compatibility) in tests/unit/auth.test.ts
-- [ ] T013 [US3] Add test case: resolveAuthConfig throws error when no credentials are configured in tests/unit/auth.test.ts
-- [ ] T014 [US3] Add test case: getAuthType returns correct type based on resolved config in tests/unit/auth.test.ts
+- [X] T011 [US3] Add test case: resolveAuthConfig returns BotAuthConfig when only SLACK_BOT_TOKEN is set in tests/unit/auth.test.ts
+- [X] T012 [US3] Add test case: resolveAuthConfig returns BotAuthConfig when both bot and user credentials are set (backward compatibility) in tests/unit/auth.test.ts
+- [X] T013 [US3] Add test case: resolveAuthConfig throws error when no credentials are configured in tests/unit/auth.test.ts
+- [X] T014 [US3] Add test case: getAuthType returns correct type based on resolved config in tests/unit/auth.test.ts
 
 ### Implementation for User Story 3
 
-- [ ] T015 [US3] Update resolveAuthConfig in src/slack/client.ts to handle SLACK_BOT_TOKEN with priority over user token
-- [ ] T016 [US3] Update getSlackClient in src/slack/client.ts to create WebClient without Cookie header for bot auth
-- [ ] T017 [US3] Add clear error message when no authentication is configured using AUTH_ERRORS.NO_AUTH_CONFIGURED
+- [X] T015 [US3] Update resolveAuthConfig in src/slack/client.ts to handle SLACK_BOT_TOKEN with priority over user token
+- [X] T016 [US3] Update getSlackClient in src/slack/client.ts to create WebClient without Cookie header for bot auth
+- [X] T017 [US3] Add clear error message when no authentication is configured using AUTH_ERRORS.NO_AUTH_CONFIGURED
 
 **Checkpoint**: Server correctly selects bot or user auth based on environment variables, maintains backward compatibility
 
@@ -95,15 +95,15 @@
 
 ### Unit Tests for User Story 2
 
-- [ ] T018 [P] [US2] Add test case: isSearchAvailable returns true when user auth is configured in tests/unit/auth.test.ts
-- [ ] T019 [P] [US2] Add test case: isSearchAvailable returns false when bot auth is configured in tests/unit/auth.test.ts
+- [X] T018 [P] [US2] Add test case: isSearchAvailable returns true when user auth is configured in tests/unit/auth.test.ts
+- [X] T019 [P] [US2] Add test case: isSearchAvailable returns false when bot auth is configured in tests/unit/auth.test.ts
 
 ### Implementation for User Story 2
 
-- [ ] T020 [US2] Implement isSearchAvailable function in src/slack/client.ts
-- [ ] T021 [US2] Export isSearchAvailable from src/slack/client.ts
-- [ ] T022 [US2] Update slack_search_messages tool in src/tools/search.ts to check isSearchAvailable before executing
-- [ ] T023 [US2] Add AUTH_ERRORS.SEARCH_REQUIRES_USER_TOKEN error response when search attempted with bot token in src/tools/search.ts
+- [X] T020 [US2] Implement isSearchAvailable function in src/slack/client.ts
+- [X] T021 [US2] Export isSearchAvailable from src/slack/client.ts
+- [X] T022 [US2] Update slack_search_messages tool in src/tools/search.ts to check isSearchAvailable before executing
+- [X] T023 [US2] Add AUTH_ERRORS.SEARCH_REQUIRES_USER_TOKEN error response when search attempted with bot token in src/tools/search.ts
 
 **Checkpoint**: Search works with user token, returns clear error message with bot token
 
@@ -117,15 +117,15 @@
 
 ### Unit Tests for User Story 4
 
-- [ ] T024 [P] [US4] Add test case: maskCredential correctly masks short credentials in tests/unit/auth.test.ts
-- [ ] T025 [P] [US4] Add test case: maskCredential correctly masks long credentials (shows first 4 and last 4 chars) in tests/unit/auth.test.ts
+- [X] T024 [P] [US4] Add test case: maskCredential correctly masks short credentials in tests/unit/auth.test.ts
+- [X] T025 [P] [US4] Add test case: maskCredential correctly masks long credentials (shows first 4 and last 4 chars) in tests/unit/auth.test.ts
 
 ### Implementation for User Story 4
 
-- [ ] T026 [US4] Implement maskCredential helper function in src/utils/errors.ts per data-model.md specification
-- [ ] T027 [US4] Update invalid_auth error message in src/utils/errors.ts to not assume bot token only
-- [ ] T028 [US4] Review and verify all error paths in src/slack/client.ts do not expose credential values
-- [ ] T029 [US4] Export maskCredential from src/utils/errors.ts for potential use in other modules
+- [X] T026 [US4] Implement maskCredential helper function in src/utils/errors.ts per data-model.md specification
+- [X] T027 [US4] Update invalid_auth error message in src/utils/errors.ts to not assume bot token only
+- [X] T028 [US4] Review and verify all error paths in src/slack/client.ts do not expose credential values
+- [X] T029 [US4] Export maskCredential from src/utils/errors.ts for potential use in other modules
 
 **Checkpoint**: Zero credential exposure in any system output
 
@@ -135,13 +135,13 @@
 
 **Purpose**: Final validation and documentation
 
-- [ ] T030 Run all unit tests with npm test to verify all auth logic passes
-- [ ] T031 Run linting with npm run lint to ensure code quality
-- [ ] T032 [P] Run build with npm run build to verify TypeScript compilation
-- [ ] T033 Manual validation: Test with bot token only (backward compatibility)
-- [ ] T034 Manual validation: Test with user token and cookie (new functionality)
-- [ ] T035 Manual validation: Test search with user token (should work)
-- [ ] T036 Manual validation: Test search with bot token (should return clear error)
+- [X] T030 Run all unit tests with npm test to verify all auth logic passes
+- [X] T031 Run linting with npm run lint to ensure code quality
+- [X] T032 [P] Run build with npm run build to verify TypeScript compilation
+- [X] T033 Manual validation: Test with bot token only (backward compatibility)
+- [X] T034 Manual validation: Test with user token and cookie (new functionality)
+- [X] T035 Manual validation: Test search with user token (should work)
+- [X] T036 Manual validation: Test search with bot token (should return clear error)
 
 ---
 

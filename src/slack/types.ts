@@ -1,3 +1,35 @@
+// Authentication types
+
+/**
+ * Authentication method type
+ */
+export type AuthType = "bot" | "user";
+
+/**
+ * Bot token authentication configuration
+ */
+export interface BotAuthConfig {
+  type: "bot";
+  /** Slack Bot User OAuth Token (xoxb-*) */
+  token: string;
+}
+
+/**
+ * User token authentication configuration
+ */
+export interface UserAuthConfig {
+  type: "user";
+  /** Slack user session token (xoxc-*) */
+  token: string;
+  /** Slack "d" cookie value */
+  cookie: string;
+}
+
+/**
+ * Union type for all authentication configurations
+ */
+export type AuthConfig = BotAuthConfig | UserAuthConfig;
+
 // Core entity types - read-only projections of Slack API responses
 
 export interface Channel {
