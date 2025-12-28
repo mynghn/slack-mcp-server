@@ -1,104 +1,138 @@
-# Implementation Plan: [FEATURE]
+# Implementation Plan: Slack User Token and D Cookie Auto Refresh
 
-**Branch**: `[###-feature-name]` | **Date**: [DATE] | **Spec**: [link]
-**Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
-
-**Note**: This template is filled in by the `/speckit.plan` command. See `.specify/templates/commands/plan.md` for the execution workflow.
+**Branch**: `003-token-auto-refresh` | **Date**: 2025-12-28 | **Spec**: [spec.md](spec.md)
+**Input**: Feature specification from `/specs/003-token-auto-refresh/spec.md`
 
 ## Summary
 
-[Extract from feature spec: primary requirement + technical approach from research]
+Add automatic refresh of Slack user tokens (xoxc-) and d cookies before expiration to enable continuous operation without manual credential updates. The system will persist refreshed credentials to survive restarts, implement retry with exponential backoff on failures, and provide manual refresh capability while maintaining backward compatibility with bot token authentication.
 
 ## Technical Context
 
-<!--
-  ACTION REQUIRED: Replace the content in this section with the technical details
-  for the project. The structure here is presented in advisory capacity to guide
-  the iteration process.
--->
-
-**Language/Version**: [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]  
-**Primary Dependencies**: [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]  
-**Storage**: [if applicable, e.g., PostgreSQL, CoreData, files or N/A]  
-**Testing**: [e.g., pytest, XCTest, cargo test or NEEDS CLARIFICATION]  
-**Target Platform**: [e.g., Linux server, iOS 15+, WASM or NEEDS CLARIFICATION]
-**Project Type**: [single/web/mobile - determines source structure]  
-**Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]  
-**Constraints**: [domain-specific, e.g., <200ms p95, <100MB memory, offline-capable or NEEDS CLARIFICATION]  
-**Scale/Scope**: [domain-specific, e.g., 10k users, 1M LOC, 50 screens or NEEDS CLARIFICATION]
+**Language/Version**: TypeScript 5.9+ with Node.js 20+
+**Primary Dependencies**: @modelcontextprotocol/sdk ^1.25.1, @slack/web-api ^7.13.0, zod ^4.2.1
+**Storage**: Filesystem (JSON file in configurable data directory) for credential persistence
+**Testing**: Vitest 3.2.4
+**Target Platform**: Node.js server (stdio-based MCP server)
+**Project Type**: Single project
+**Performance Goals**: Manual refresh completes within 10 seconds; refresh failures detected within 1 minute
+**Constraints**: No external database dependencies; credentials must be stored securely with restricted file permissions
+**Scale/Scope**: Single MCP server instance; 6+ months continuous operation without manual intervention
 
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+### Principle I: Simplicity Over Complexity
+
+| Aspect | Assessment | Status |
+|--------|------------|--------|
+| Core refresh mechanism | Single RefreshManager class handles all refresh logic | PASS |
+| Credential storage | Plain JSON file with atomic writes (no database) | PASS |
+| Scheduling | Simple interval-based check (not cron library) | PASS |
+| Retry logic | Built-in exponential backoff (no external library) | PASS |
+| Manual trigger | Single MCP tool `refresh_credentials` | PASS |
+
+**Justification**: All components use the simplest approach that meets requirements. No additional libraries required beyond existing dependencies.
+
+### Principle II: Human-Reviewable Outputs
+
+| Aspect | Assessment | Status |
+|--------|------------|--------|
+| Feature scope | Adds ~300-400 lines of new code across 4-5 files | PASS |
+| Single PR reviewable | All changes can be reviewed in one sitting | PASS |
+| Specification size | spec.md is 103 lines, reviewable | PASS |
+
+**Gate Status**: PASS - Proceed to Phase 0
 
 ## Project Structure
 
 ### Documentation (this feature)
 
 ```text
-specs/[###-feature]/
-├── plan.md              # This file (/speckit.plan command output)
-├── research.md          # Phase 0 output (/speckit.plan command)
-├── data-model.md        # Phase 1 output (/speckit.plan command)
-├── quickstart.md        # Phase 1 output (/speckit.plan command)
-├── contracts/           # Phase 1 output (/speckit.plan command)
-└── tasks.md             # Phase 2 output (/speckit.tasks command - NOT created by /speckit.plan)
+specs/003-token-auto-refresh/
+├── plan.md              # This file
+├── research.md          # Phase 0 output
+├── data-model.md        # Phase 1 output
+├── quickstart.md        # Phase 1 output
+├── contracts/           # Phase 1 output
+│   └── refresh-tool.md  # MCP tool contract
+└── tasks.md             # Phase 2 output (created by /speckit.tasks)
 ```
 
 ### Source Code (repository root)
-<!--
-  ACTION REQUIRED: Replace the placeholder tree below with the concrete layout
-  for this feature. Delete unused options and expand the chosen structure with
-  real paths (e.g., apps/admin, packages/something). The delivered plan must
-  not include Option labels.
--->
 
 ```text
-# [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
 src/
-├── models/
-├── services/
-├── cli/
-└── lib/
+├── index.ts             # Entry point (unchanged)
+├── server.ts            # MCP server config (add refresh tool registration)
+├── slack/
+│   ├── client.ts        # Extend with refresh capability
+│   └── types.ts         # Add refresh-related types
+├── tools/
+│   ├── channels.ts      # (unchanged)
+│   ├── messages.ts      # (unchanged)
+│   ├── search.ts        # (unchanged)
+│   ├── users.ts         # (unchanged)
+│   └── refresh.ts       # NEW: Manual refresh trigger tool
+├── refresh/             # NEW: Refresh subsystem
+│   ├── manager.ts       # RefreshManager class - orchestrates refresh lifecycle
+│   ├── scheduler.ts     # Interval-based refresh scheduling
+│   └── storage.ts       # Credential persistence (JSON file)
+└── utils/
+    ├── errors.ts        # Add refresh-related error types
+    └── pagination.ts    # (unchanged)
 
 tests/
-├── contract/
-├── integration/
-└── unit/
-
-# [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
-backend/
-├── src/
-│   ├── models/
-│   ├── services/
-│   └── api/
-└── tests/
-
-frontend/
-├── src/
-│   ├── components/
-│   ├── pages/
-│   └── services/
-└── tests/
-
-# [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
-api/
-└── [same as backend above]
-
-ios/ or android/
-└── [platform-specific structure: feature modules, UI flows, platform tests]
+├── unit/
+│   ├── auth.test.ts           # (existing)
+│   ├── refresh-manager.test.ts # NEW: RefreshManager tests
+│   ├── scheduler.test.ts       # NEW: Scheduler tests
+│   └── storage.test.ts         # NEW: Storage tests
+└── integration/
+    └── refresh-flow.test.ts    # NEW: End-to-end refresh flow
 ```
 
-**Structure Decision**: [Document the selected structure and reference the real
-directories captured above]
+**Structure Decision**: Single project structure maintained. New `src/refresh/` directory isolates refresh functionality while integrating with existing `src/slack/client.ts` for credential management.
 
 ## Complexity Tracking
 
-> **Fill ONLY if Constitution Check has violations that must be justified**
+> No Constitution violations identified. All design choices favor simplicity.
 
 | Violation | Why Needed | Simpler Alternative Rejected Because |
 |-----------|------------|-------------------------------------|
-| [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
-| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
+| N/A | N/A | N/A |
+
+---
+
+## Post-Design Constitution Re-Check
+
+*Completed after Phase 1 design artifacts generated.*
+
+### Principle I: Simplicity Over Complexity - PASS
+
+| Design Artifact | Simplicity Assessment |
+|-----------------|----------------------|
+| [data-model.md](data-model.md) | 5 entities, all with clear single responsibility |
+| [research.md](research.md) | 4 decisions, each with simpler-alternative analysis |
+| [contracts/refresh-tool.md](contracts/refresh-tool.md) | Single tool, no parameters, clear error codes |
+| Source structure | 3 new files in `src/refresh/`, 1 new tool file |
+
+**No new dependencies introduced.** All functionality uses existing libraries (Node.js fs, @slack/web-api, zod).
+
+### Principle II: Human-Reviewable Outputs - PASS
+
+| Artifact | Size | Reviewable? |
+|----------|------|-------------|
+| plan.md | ~130 lines | Yes |
+| research.md | ~180 lines | Yes |
+| data-model.md | ~170 lines | Yes |
+| quickstart.md | ~120 lines | Yes |
+| refresh-tool.md | ~150 lines | Yes |
+| **Total design docs** | ~750 lines | Yes (single session) |
+
+**Estimated implementation**: 300-400 lines of new code across 5 files, well within single-PR review scope.
+
+### Final Gate Status: PASS
+
+Design is ready for Phase 2 task generation (`/speckit.tasks`).
